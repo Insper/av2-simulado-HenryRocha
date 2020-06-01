@@ -310,37 +310,38 @@ void font_draw_text(tFont *font, const char *text, int x, int y, int spacing) {
     }
 }
 
-void draw_button(t_but but) {
+void draw_button(t_but *but) {
     uint32_t color;
-    if (but.status > 0) {
-        color = but.colorOn;
+    if (but->status > 0) {
+        color = but->colorOn;
     } else {
-        color = but.colorOff;
+        color = but->colorOff;
     }
 
-    if (but.border >= 1) {
+    if (but->border >= 1) {
         // Desenha um fundo preto, serve como a borda.
         ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
-        ili9488_draw_filled_rectangle(but.x - but.width / 2, but.y - but.height / 2, but.x + but.width / 2, but.y + but.height / 2);
+        ili9488_draw_filled_rectangle(but->x - but->width / 2, but->y - but->height / 2, but->x + but->width / 2,
+                                      but->y + but->height / 2);
     }
 
     // Desenha a cor do botão.
     ili9488_set_foreground_color(COLOR_CONVERT(color));
-    ili9488_draw_filled_rectangle(but.x - but.width / 2 + but.border, but.y - but.height / 2 + but.border,
-                                  but.x + but.width / 2 - but.border, but.y + but.height / 2 - but.border);
+    ili9488_draw_filled_rectangle(but->x - but->width / 2 + but->border, but->y - but->height / 2 + but->border,
+                                  but->x + but->width / 2 - but->border, but->y + but->height / 2 - but->border);
 
     // Reseta a cor para preto.
     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
 
     // Escreve o texto do botão.
-    font_draw_text(&calibri_36, but.text, but.x - but.width / 2 + but.border + 8, but.y - but.height / 2 + but.border + 8, 0);
+    font_draw_text(&calibri_36, but->text, but->x - but->width / 2 + but->border + 8, but->y - but->height / 2 + but->border + 8, 0);
 }
 
-int process_touch(t_but buttons[], touchData touch, uint32_t n) {
+int process_touch(t_but *buttons[], touchData touch, uint32_t n) {
     for (int i = 0; i < n; i++) {
-        if (touch.x >= buttons[i].x - buttons[i].width / 2 && touch.x <= buttons[i].x + buttons[i].width / 2) {
-            if (touch.y >= buttons[i].y - buttons[i].height / 2 && touch.y <= buttons[i].y + buttons[i].height / 2) {
-                printf("Button:\tX: %d\tY: %d\r\n", buttons[i].x, buttons[i].y);
+        if (touch.x >= buttons[i]->x - buttons[i]->width / 2 && touch.x <= buttons[i]->x + buttons[i]->width / 2) {
+            if (touch.y >= buttons[i]->y - buttons[i]->height / 2 && touch.y <= buttons[i]->y + buttons[i]->height / 2) {
+                printf("Button:\tX: %d\tY: %d\r\n", buttons[i]->x, buttons[i]->y);
                 return i;
             }
         }
@@ -442,7 +443,7 @@ void task_lcd(void) {
                            .status = 1};
 
     // Criando a lista de botões.
-    t_but buttons[NUM_BUTTONS] = {but_on, but_upscale, but_downscale, but_lp_filter};
+    t_but *buttons[NUM_BUTTONS] = {&but_on, &but_upscale, &but_downscale, &but_lp_filter};
 
     // Configurando o LCD.
     configure_lcd();
@@ -451,10 +452,10 @@ void task_lcd(void) {
     clear_screen();
 
     // Desenhando os botões.
-    draw_button(but_on);
-    draw_button(but_upscale);
-    draw_button(but_downscale);
-    draw_button(but_lp_filter);
+    draw_button(&but_on);
+    draw_button(&but_upscale);
+    draw_button(&but_downscale);
+    draw_button(&but_lp_filter);
 
     // Como o botão de ON começa ligado, devemos também desenhar o REC na tela.
     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
@@ -468,16 +469,16 @@ void task_lcd(void) {
 
             // Desenhando e trocando o status do botão pressionado.
             if (clickedButton >= 0) {
-                buttons[clickedButton].status = !buttons[clickedButton].status;
+                buttons[clickedButton]->status = !buttons[clickedButton]->status;
                 draw_button(buttons[clickedButton]);
             }
 
             // Lógica dos botões.
             if (clickedButton == 0) {
-                collect_data = buttons[0].status;
+                collect_data = buttons[0]->status;
 
                 // Desenha ou não o ícone do REC.
-                if (buttons[0].status) {
+                if (buttons[0]->status) {
                     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
                     ili9488_draw_pixmap(0, 0, rec.width, rec.height, rec.data);
                 } else {
@@ -488,16 +489,16 @@ void task_lcd(void) {
 
             if (clickedButton == 1) {
                 scale--;
-                buttons[1].status = 0;
+                buttons[1]->status = 0;
             }
 
             if (clickedButton == 2) {
                 scale++;
-                buttons[2].status = 0;
+                buttons[2]->status = 0;
             }
 
             if (clickedButton == 3) {
-                lp_filter = buttons[3].status;
+                lp_filter = buttons[3]->status;
             }
 
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
@@ -524,10 +525,10 @@ void task_lcd(void) {
 
                 clear_screen();
 
-                draw_button(but_on);
-                draw_button(but_upscale);
-                draw_button(but_downscale);
-                draw_button(but_lp_filter);
+                draw_button(&but_on);
+                draw_button(&but_upscale);
+                draw_button(&but_downscale);
+                draw_button(&but_lp_filter);
 
                 // Desenha o REC na tela.
                 ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
