@@ -27,7 +27,7 @@
 // Buttons
 #define BUT_SIZE 64
 #define BUT_SPACING 8
-#define NUM_BUTTONS 5
+#define NUM_BUTTONS 6
 
 // Queues
 QueueHandle_t xQueueADC;
@@ -37,6 +37,7 @@ QueueHandle_t xQueueTouch;
 // Flags
 volatile unsigned short int collect_data;
 volatile unsigned short int lp_filter;
+volatile unsigned short int hp_filter;
 
 // =============================================================================================
 // AFEC DEFINES AND GLOBAL VARIABLES
@@ -45,8 +46,9 @@ volatile unsigned short int lp_filter;
 #define AFEC_POT_ID ID_AFEC1
 #define AFEC_POT_CHANNEL 6  // Canal do pino PC31
 
-#define NUM_TAPS 8    // ordem do filtro (quantos coefientes)
-#define BLOCK_SIZE 1  // se será processado por blocos, no caso não.
+#define NUM_TAPS 8     // ordem do filtro (quantos coefientes)
+#define NUM_TAPS_HP 9  // ordem do filtro (quantos coefientes)
+#define BLOCK_SIZE 1   // se será processado por blocos, no caso não.
 
 /** The conversion data is done flag */
 volatile bool g_is_conversion_done = false;
@@ -392,6 +394,9 @@ void task_lcd(void) {
     // Flag que controla se o filtro passa baixa está ligado ou não.
     lp_filter = 1;
 
+    // Flag que controla se o filtro passa alta está ligado ou não.
+    hp_filter = 0;
+
     // Posição X inicial do gráfico.
     int x = 0;
 
@@ -456,8 +461,19 @@ void task_lcd(void) {
                          .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
                          .status = 1};
 
+    // Botão que liga/desliga o filtro passa baixa.
+    t_but but_hp_filter = {.width = BUT_SIZE,
+                           .height = BUT_SIZE,
+                           .border = 2,
+                           .colorOn = COLOR_YELLOWGREEN,
+                           .colorOff = COLOR_GRAY,
+                           .text = "HP",
+                           .x = BUT_SIZE / 2 + BUT_SPACING * 6 + BUT_SIZE * 5,
+                           .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
+                           .status = 0};
+
     // Criando a lista de botões.
-    t_but *buttons[NUM_BUTTONS] = {&but_on, &but_upscale, &but_downscale, &but_lp_filter, &but_scale_x};
+    t_but *buttons[NUM_BUTTONS] = {&but_on, &but_upscale, &but_downscale, &but_lp_filter, &but_scale_x, &but_hp_filter};
 
     // Configurando o LCD.
     configure_lcd();
@@ -471,6 +487,7 @@ void task_lcd(void) {
     draw_button(&but_downscale);
     draw_button(&but_lp_filter);
     draw_button(&but_scale_x);
+    draw_button(&but_hp_filter);
 
     // Como o botão de ON começa ligado, devemos também desenhar o REC na tela.
     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
@@ -513,7 +530,17 @@ void task_lcd(void) {
             }
 
             if (clickedButton == 3) {
-                lp_filter = buttons[3]->status;
+                if (buttons[3]->status == 1) {
+                    buttons[4]->status = 0;
+                    lp_filter = 1;
+                    hp_filter = 0;
+                } else {
+                    buttons[4]->status = 1;
+                    lp_filter = 0;
+                    hp_filter = 1;
+                }
+
+                draw_button(&but_hp_filter);
             }
 
             if (clickedButton == 4) {
@@ -524,12 +551,26 @@ void task_lcd(void) {
                 }
             }
 
+            if (clickedButton == 5) {
+                if (buttons[4]->status == 1) {
+                    buttons[3]->status = 0;
+                    lp_filter = 0;
+                    hp_filter = 1;
+                } else {
+                    buttons[3]->status = 1;
+                    lp_filter = 1;
+                    hp_filter = 0;
+                }
+
+                draw_button(&but_lp_filter);
+            }
+
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
             printf("Touch:\tX: %u\tY: %u\tButton:\t%d\r\n", touch.x, touch.y, clickedButton);
         }
 
         if (xQueueReceive(xQueuePlot, &(plot), (TickType_t)100 / portTICK_PERIOD_MS)) {
-            if (lp_filter) {
+            if (lp_filter || hp_filter) {
                 // Desenhando um ponto preto com o valor filtrado do potênciometro.
                 ili9488_set_foreground_color(COLOR_CONVERT(COLOR_RED));
                 ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.filtrado / scale - 64, 2);
@@ -553,6 +594,7 @@ void task_lcd(void) {
                 draw_button(&but_downscale);
                 draw_button(&but_lp_filter);
                 draw_button(&but_scale_x);
+                draw_button(&but_hp_filter);
 
                 // Desenha o REC na tela.
                 ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
@@ -575,6 +617,16 @@ void task_adc(void) {
     const float32_t firCoeffs32[NUM_TAPS] = {0.12269166637219883, 0.12466396327768503, 0.1259892807712678,  0.12665508957884833,
                                              0.12665508957884833, 0.1259892807712678,  0.12466396327768503, 0.12269166637219883};
 
+    // Opção 1
+    const float32_t firCoeffs32_hp[NUM_TAPS_HP] = {-0.0813843055803135,  -0.09230616710541738, -0.10059653399888294,
+                                                   -0.10577345538912582, 0.9678024341693063,   -0.10577345538912582,
+                                                   -0.10059653399888294, -0.09230616710541738, -0.0813843055803135};
+
+    // Opção 2
+    // const float32_t firCoeffs32_hp[NUM_TAPS] = {0.07242382057239563,  0.05968051027848589, -0.08952076541772881,
+    //                                             -0.28969528228958263, 0.5741643456684731,  -0.28969528228958263,
+    //                                             -0.08952076541772881, 0.05968051027848589, 0.07242382057239563};
+
     /* Cria buffers para filtragem e faz a inicializacao do filtro. */
     float32_t firStateF32[BLOCK_SIZE + NUM_TAPS - 1];
     float32_t inputF32[BLOCK_SIZE + NUM_TAPS - 1];
@@ -582,6 +634,14 @@ void task_adc(void) {
     arm_fir_instance_f32 S;
     arm_fir_init_f32(&S, NUM_TAPS, (float32_t *)&firCoeffs32[0], &firStateF32[0], BLOCK_SIZE);
     int i = 0;
+
+    /* Cria buffers para filtragem e faz a inicializacao do filtro. */
+    float32_t firStateF32_hp[BLOCK_SIZE + NUM_TAPS_HP - 1];
+    float32_t inputF32_hp[BLOCK_SIZE + NUM_TAPS_HP - 1];
+    float32_t outputF32_hp[BLOCK_SIZE + NUM_TAPS_HP - 1];
+    arm_fir_instance_f32 S_hp;
+    arm_fir_init_f32(&S_hp, NUM_TAPS_HP, (float32_t *)&firCoeffs32_hp[0], &firStateF32_hp[0], BLOCK_SIZE);
+    int i_hp = 0;
 
     while (1) {
         if (xQueueReceive(xQueueADC, &(adc), 100)) {
@@ -594,6 +654,16 @@ void task_adc(void) {
                     plot.filtrado = (int)outputF32[0];
                     xQueueSend(xQueuePlot, &plot, 0);
                     i = 0;
+                }
+            } else if (hp_filter) {
+                if (i_hp <= NUM_TAPS_HP) {
+                    inputF32_hp[i_hp++] = (float)adc.value;
+                } else {
+                    arm_fir_f32(&S_hp, &inputF32_hp[0], &outputF32_hp[0], BLOCK_SIZE);
+                    plot.raw = (int)inputF32_hp[0];
+                    plot.filtrado = (int)outputF32_hp[0];
+                    xQueueSend(xQueuePlot, &plot, 0);
+                    i_hp = 0;
                 }
             } else {
                 plot.raw = (float)adc.value;
