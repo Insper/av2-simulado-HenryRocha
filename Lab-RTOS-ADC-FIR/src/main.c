@@ -531,13 +531,11 @@ void task_lcd(void) {
 
             if (clickedButton == 3) {
                 if (buttons[3]->status == 1) {
-                    buttons[4]->status = 0;
+                    buttons[5]->status = 0;
                     lp_filter = 1;
                     hp_filter = 0;
                 } else {
-                    buttons[4]->status = 1;
                     lp_filter = 0;
-                    hp_filter = 1;
                 }
 
                 draw_button(&but_hp_filter);
@@ -552,13 +550,11 @@ void task_lcd(void) {
             }
 
             if (clickedButton == 5) {
-                if (buttons[4]->status == 1) {
+                if (buttons[5]->status == 1) {
                     buttons[3]->status = 0;
                     lp_filter = 0;
                     hp_filter = 1;
                 } else {
-                    buttons[3]->status = 1;
-                    lp_filter = 1;
                     hp_filter = 0;
                 }
 
@@ -570,6 +566,8 @@ void task_lcd(void) {
         }
 
         if (xQueueReceive(xQueuePlot, &(plot), (TickType_t)100 / portTICK_PERIOD_MS)) {
+            printf("LP:\t%hu\tHP: \t%hu\r\n", lp_filter, hp_filter);
+
             if (lp_filter || hp_filter) {
                 // Desenhando um ponto preto com o valor filtrado do potênciometro.
                 ili9488_set_foreground_color(COLOR_CONVERT(COLOR_RED));
