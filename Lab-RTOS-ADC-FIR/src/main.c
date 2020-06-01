@@ -453,6 +453,10 @@ void task_lcd(void) {
     draw_button(but_downscale);
     draw_button(but_lp_filter);
 
+    // Como o botão de ON começa ligado, devemos também desenhar o REC na tela.
+    ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
+    ili9488_draw_pixmap(0, 0, rec.width, rec.height, rec.data);
+
     while (1) {
         // Se existe algo na fila de toques.
         if (xQueueReceive(xQueueTouch, &(touch), (TickType_t)0 / portTICK_PERIOD_MS)) {
@@ -468,6 +472,15 @@ void task_lcd(void) {
             // Lógica dos botões.
             if (clickedButton == 0) {
                 collect_data = buttons[0].status;
+
+                // Desenha ou não o ícone do REC.
+                if (buttons[0].status) {
+                    ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
+                    ili9488_draw_pixmap(0, 0, rec.width, rec.height, rec.data);
+                } else {
+                    ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
+                    ili9488_draw_filled_rectangle(0, 0, rec.width, rec.height);
+                }
             }
 
             if (clickedButton == 1) {
@@ -502,14 +515,20 @@ void task_lcd(void) {
             // Aumenta o X.
             x = x + 5;
 
-            // Quando chega no fim da tela, reseta o X e desenha os botões novamente.
+            // Quando chega no fim da tela, reseta o X e desenha os botões e o REC novamente.
             if (x >= ILI9488_LCD_WIDTH) {
                 x = 0;
+
                 clear_screen();
+
                 draw_button(but_on);
                 draw_button(but_upscale);
                 draw_button(but_downscale);
                 draw_button(but_lp_filter);
+
+                // Desenha o REC na tela.
+                ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
+                ili9488_draw_pixmap(0, 0, rec.width, rec.height, rec.data);
             }
         }
     }
