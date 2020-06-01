@@ -27,15 +27,15 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  11 .debug_macro  0002832a  00000000  00000000  0005708f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_line   00018e9c  00000000  00000000  0007f3b9  2**0
+ 12 .debug_line   00018e96  00000000  00000000  0007f3b9  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    000a0659  00000000  00000000  00098255  2**0
+ 13 .debug_str    000a0659  00000000  00000000  0009824f  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_loc    0000f23b  00000000  00000000  001388ae  2**0
+ 14 .debug_loc    0000f225  00000000  00000000  001388a8  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00001660  00000000  00000000  00147ae9  2**0
+ 15 .debug_ranges 00001660  00000000  00000000  00147acd  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_frame  00003e98  00000000  00000000  0014914c  2**2
+ 16 .debug_frame  00003e98  00000000  00000000  00149130  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -51,7 +51,7 @@ Disassembly of section .text:
   40006c:	cd 19 40 00 e1 19 40 00 3f 20 40 00 3f 20 40 00     ..@...@.? @.? @.
   40007c:	3f 20 40 00 f5 19 40 00 09 1a 40 00 3f 20 40 00     ? @...@...@.? @.
   40008c:	3f 20 40 00 3f 20 40 00 3f 20 40 00 3f 20 40 00     ? @.? @.? @.? @.
-  40009c:	3f 20 40 00 a9 43 40 00 3f 20 40 00 3f 20 40 00     ? @..C@.? @.? @.
+  40009c:	3f 20 40 00 9d 43 40 00 3f 20 40 00 3f 20 40 00     ? @..C@.? @.? @.
   4000ac:	3f 20 40 00 3f 20 40 00 49 04 40 00 3f 20 40 00     ? @.? @.I.@.? @.
   4000bc:	3f 20 40 00 3f 20 40 00 3f 20 40 00 3f 20 40 00     ? @.? @.? @.? @.
   4000cc:	3f 20 40 00 3f 20 40 00 3f 20 40 00 3f 20 40 00     ? @.? @.? @.? @.
@@ -10113,9 +10113,9 @@ Timer_t * const pxTimer = ( Timer_t * ) listGET_OWNER_OF_HEAD_ENTRY( pxCurrentTi
   403f78:	00402359 	.word	0x00402359
 
 00403f7c <AFEC_pot_Callback>:
-    /* Selecina canal e inicializa conversão */
-    afec_channel_enable(AFEC_POT, AFEC_POT_CHANNEL);
-    afec_start_software_conversion(AFEC_POT);
+        afec_channel_enable(AFEC_POT, AFEC_POT_CHANNEL);
+        afec_start_software_conversion(AFEC_POT);
+    }
 }
 
 static void AFEC_pot_Callback(void) {
@@ -10582,23 +10582,23 @@ void task_adc(void) {
   404244:	2200      	movs	r2, #0
   404246:	2104      	movs	r1, #4
   404248:	20c8      	movs	r0, #200	; 0xc8
-  40424a:	4b41      	ldr	r3, [pc, #260]	; (404350 <task_adc+0x110>)
+  40424a:	4b3f      	ldr	r3, [pc, #252]	; (404348 <task_adc+0x108>)
   40424c:	4798      	blx	r3
-  40424e:	4b41      	ldr	r3, [pc, #260]	; (404354 <task_adc+0x114>)
+  40424e:	4b3f      	ldr	r3, [pc, #252]	; (40434c <task_adc+0x10c>)
   404250:	6018      	str	r0, [r3, #0]
     afec_enable(afec);
-  404252:	4c41      	ldr	r4, [pc, #260]	; (404358 <task_adc+0x118>)
+  404252:	4c3f      	ldr	r4, [pc, #252]	; (404350 <task_adc+0x110>)
   404254:	4620      	mov	r0, r4
-  404256:	4b41      	ldr	r3, [pc, #260]	; (40435c <task_adc+0x11c>)
+  404256:	4b3f      	ldr	r3, [pc, #252]	; (404354 <task_adc+0x114>)
   404258:	4798      	blx	r3
     afec_get_config_defaults(&afec_cfg);
   40425a:	a806      	add	r0, sp, #24
-  40425c:	4b40      	ldr	r3, [pc, #256]	; (404360 <task_adc+0x120>)
+  40425c:	4b3e      	ldr	r3, [pc, #248]	; (404358 <task_adc+0x118>)
   40425e:	4798      	blx	r3
     afec_init(afec, &afec_cfg);
   404260:	a906      	add	r1, sp, #24
   404262:	4620      	mov	r0, r4
-  404264:	4b3f      	ldr	r3, [pc, #252]	; (404364 <task_adc+0x124>)
+  404264:	4b3d      	ldr	r3, [pc, #244]	; (40435c <task_adc+0x11c>)
   404266:	4798      	blx	r3
 	reg = afec->AFEC_MR;
   404268:	6863      	ldr	r3, [r4, #4]
@@ -10608,7 +10608,7 @@ void task_adc(void) {
   40426e:	6063      	str	r3, [r4, #4]
     afec_ch_get_config_defaults(&afec_ch_cfg);
   404270:	a803      	add	r0, sp, #12
-  404272:	4b3d      	ldr	r3, [pc, #244]	; (404368 <task_adc+0x128>)
+  404272:	4b3b      	ldr	r3, [pc, #236]	; (404360 <task_adc+0x120>)
   404274:	4798      	blx	r3
     afec_ch_cfg.gain = AFEC_GAINVALUE_0;
   404276:	2600      	movs	r6, #0
@@ -10617,7 +10617,7 @@ void task_adc(void) {
   40427c:	aa03      	add	r2, sp, #12
   40427e:	2106      	movs	r1, #6
   404280:	4620      	mov	r0, r4
-  404282:	4b3a      	ldr	r3, [pc, #232]	; (40436c <task_adc+0x12c>)
+  404282:	4b38      	ldr	r3, [pc, #224]	; (404364 <task_adc+0x124>)
   404284:	4798      	blx	r3
 static inline void afec_channel_set_analog_offset(Afec *const afec,
 		enum afec_channel_num afec_ch, uint16_t aoffset)
@@ -10632,22 +10632,22 @@ static inline void afec_channel_set_analog_offset(Afec *const afec,
   40428e:	66e3      	str	r3, [r4, #108]	; 0x6c
     afec_temp_sensor_get_config_defaults(&afec_temp_sensor_cfg);
   404290:	a804      	add	r0, sp, #16
-  404292:	4b37      	ldr	r3, [pc, #220]	; (404370 <task_adc+0x130>)
+  404292:	4b35      	ldr	r3, [pc, #212]	; (404368 <task_adc+0x128>)
   404294:	4798      	blx	r3
     afec_temp_sensor_set_config(afec, &afec_temp_sensor_cfg);
   404296:	a904      	add	r1, sp, #16
   404298:	4620      	mov	r0, r4
-  40429a:	4b36      	ldr	r3, [pc, #216]	; (404374 <task_adc+0x134>)
+  40429a:	4b34      	ldr	r3, [pc, #208]	; (40436c <task_adc+0x12c>)
   40429c:	4798      	blx	r3
     afec_set_callback(afec, afec_channel, callback, 1);
   40429e:	2301      	movs	r3, #1
-  4042a0:	4a35      	ldr	r2, [pc, #212]	; (404378 <task_adc+0x138>)
+  4042a0:	4a33      	ldr	r2, [pc, #204]	; (404370 <task_adc+0x130>)
   4042a2:	4629      	mov	r1, r5
   4042a4:	4620      	mov	r0, r4
-  4042a6:	4c35      	ldr	r4, [pc, #212]	; (40437c <task_adc+0x13c>)
+  4042a6:	4c33      	ldr	r4, [pc, #204]	; (404374 <task_adc+0x134>)
   4042a8:	47a0      	blx	r4
     NVIC->IP[(uint32_t)(IRQn)]            = ((priority << (8 - __NVIC_PRIO_BITS)) & 0xff); } /* set Priority for device specific Interrupts  */
-  4042aa:	4b35      	ldr	r3, [pc, #212]	; (404380 <task_adc+0x140>)
+  4042aa:	4b33      	ldr	r3, [pc, #204]	; (404378 <task_adc+0x138>)
   4042ac:	2280      	movs	r2, #128	; 0x80
   4042ae:	f883 2328 	strb.w	r2, [r3, #808]	; 0x328
   NVIC->ISER[(uint32_t)((int32_t)IRQn) >> 5] = (uint32_t)(1 << ((uint32_t)((int32_t)IRQn) & (uint32_t)0x1F)); /* enable interrupt */
@@ -10660,13 +10660,13 @@ static inline void afec_channel_set_analog_offset(Afec *const afec,
   4042b8:	2364      	movs	r3, #100	; 0x64
   4042ba:	2201      	movs	r2, #1
   4042bc:	2118      	movs	r1, #24
-  4042be:	4831      	ldr	r0, [pc, #196]	; (404384 <task_adc+0x144>)
-  4042c0:	4c31      	ldr	r4, [pc, #196]	; (404388 <task_adc+0x148>)
+  4042be:	482f      	ldr	r0, [pc, #188]	; (40437c <task_adc+0x13c>)
+  4042c0:	4c2f      	ldr	r4, [pc, #188]	; (404380 <task_adc+0x140>)
   4042c2:	47a0      	blx	r4
 
     const float32_t firCoeffs32[NUM_TAPS] = {0.12269166637219883, 0.12466396327768503, 0.1259892807712678,  0.12665508957884833,
   4042c4:	ac27      	add	r4, sp, #156	; 0x9c
-  4042c6:	4d31      	ldr	r5, [pc, #196]	; (40438c <task_adc+0x14c>)
+  4042c6:	4d2f      	ldr	r5, [pc, #188]	; (404384 <task_adc+0x144>)
   4042c8:	cd0f      	ldmia	r5!, {r0, r1, r2, r3}
   4042ca:	c40f      	stmia	r4!, {r0, r1, r2, r3}
   4042cc:	e895 000f 	ldmia.w	r5, {r0, r1, r2, r3}
@@ -10683,114 +10683,115 @@ static inline void afec_channel_set_analog_offset(Afec *const afec,
   4042da:	aa27      	add	r2, sp, #156	; 0x9c
   4042dc:	2108      	movs	r1, #8
   4042de:	a80c      	add	r0, sp, #48	; 0x30
-  4042e0:	4c2b      	ldr	r4, [pc, #172]	; (404390 <task_adc+0x150>)
+  4042e0:	4c29      	ldr	r4, [pc, #164]	; (404388 <task_adc+0x148>)
   4042e2:	47a0      	blx	r4
     int i = 0;
 
     while (1) {
-        if (xQueueReceive(xQueueADC, &(adc), 100) && collect_data) {
-  4042e4:	4d1b      	ldr	r5, [pc, #108]	; (404354 <task_adc+0x114>)
-  4042e6:	4c2b      	ldr	r4, [pc, #172]	; (404394 <task_adc+0x154>)
-  4042e8:	4f2b      	ldr	r7, [pc, #172]	; (404398 <task_adc+0x158>)
-  4042ea:	e019      	b.n	404320 <task_adc+0xe0>
+        if (xQueueReceive(xQueueADC, &(adc), 100)) {
+  4042e4:	4d19      	ldr	r5, [pc, #100]	; (40434c <task_adc+0x10c>)
+  4042e6:	4c29      	ldr	r4, [pc, #164]	; (40438c <task_adc+0x14c>)
             if (i <= NUM_TAPS) {
                 inputF32[i++] = (float)adc.value;
             } else {
                 arm_fir_f32(&S, &inputF32[0], &outputF32[0], BLOCK_SIZE);
+  4042e8:	4f29      	ldr	r7, [pc, #164]	; (404390 <task_adc+0x150>)
+  4042ea:	e018      	b.n	40431e <task_adc+0xde>
   4042ec:	2301      	movs	r3, #1
   4042ee:	aa0f      	add	r2, sp, #60	; 0x3c
   4042f0:	a917      	add	r1, sp, #92	; 0x5c
   4042f2:	a80c      	add	r0, sp, #48	; 0x30
-  4042f4:	4e29      	ldr	r6, [pc, #164]	; (40439c <task_adc+0x15c>)
-  4042f6:	47b0      	blx	r6
+  4042f4:	47b8      	blx	r7
                 plot.raw = (int)inputF32[0];
-  4042f8:	eddd 7a17 	vldr	s15, [sp, #92]	; 0x5c
-  4042fc:	eefd 7ae7 	vcvt.s32.f32	s15, s15
-  404300:	edcd 7a2f 	vstr	s15, [sp, #188]	; 0xbc
+  4042f6:	eddd 7a17 	vldr	s15, [sp, #92]	; 0x5c
+  4042fa:	eefd 7ae7 	vcvt.s32.f32	s15, s15
+  4042fe:	edcd 7a2f 	vstr	s15, [sp, #188]	; 0xbc
                 plot.filtrado = (int)outputF32[0];
-  404304:	eddd 7a0f 	vldr	s15, [sp, #60]	; 0x3c
-  404308:	eefd 7ae7 	vcvt.s32.f32	s15, s15
-  40430c:	edcd 7a30 	vstr	s15, [sp, #192]	; 0xc0
+  404302:	eddd 7a0f 	vldr	s15, [sp, #60]	; 0x3c
+  404306:	eefd 7ae7 	vcvt.s32.f32	s15, s15
+  40430a:	edcd 7a30 	vstr	s15, [sp, #192]	; 0xc0
                 xQueueSend(xQueuePlot, &plot, 0);
-  404310:	2300      	movs	r3, #0
-  404312:	461a      	mov	r2, r3
-  404314:	a92f      	add	r1, sp, #188	; 0xbc
-  404316:	4822      	ldr	r0, [pc, #136]	; (4043a0 <task_adc+0x160>)
-  404318:	6800      	ldr	r0, [r0, #0]
-  40431a:	4e22      	ldr	r6, [pc, #136]	; (4043a4 <task_adc+0x164>)
-  40431c:	47b0      	blx	r6
+  40430e:	2300      	movs	r3, #0
+  404310:	461a      	mov	r2, r3
+  404312:	a92f      	add	r1, sp, #188	; 0xbc
+  404314:	481f      	ldr	r0, [pc, #124]	; (404394 <task_adc+0x154>)
+  404316:	6800      	ldr	r0, [r0, #0]
+  404318:	4e1f      	ldr	r6, [pc, #124]	; (404398 <task_adc+0x158>)
+  40431a:	47b0      	blx	r6
                 i = 0;
-  40431e:	2600      	movs	r6, #0
-        if (xQueueReceive(xQueueADC, &(adc), 100) && collect_data) {
-  404320:	2300      	movs	r3, #0
-  404322:	2264      	movs	r2, #100	; 0x64
-  404324:	a931      	add	r1, sp, #196	; 0xc4
-  404326:	6828      	ldr	r0, [r5, #0]
-  404328:	47a0      	blx	r4
-  40432a:	2800      	cmp	r0, #0
-  40432c:	d0f8      	beq.n	404320 <task_adc+0xe0>
-  40432e:	883b      	ldrh	r3, [r7, #0]
-  404330:	b29b      	uxth	r3, r3
-  404332:	2b00      	cmp	r3, #0
-  404334:	d0f4      	beq.n	404320 <task_adc+0xe0>
+  40431c:	2600      	movs	r6, #0
+        if (xQueueReceive(xQueueADC, &(adc), 100)) {
+  40431e:	2300      	movs	r3, #0
+  404320:	2264      	movs	r2, #100	; 0x64
+  404322:	a931      	add	r1, sp, #196	; 0xc4
+  404324:	6828      	ldr	r0, [r5, #0]
+  404326:	47a0      	blx	r4
+  404328:	2800      	cmp	r0, #0
+  40432a:	d0f8      	beq.n	40431e <task_adc+0xde>
             if (i <= NUM_TAPS) {
-  404336:	2e08      	cmp	r6, #8
-  404338:	dcd8      	bgt.n	4042ec <task_adc+0xac>
+  40432c:	2e08      	cmp	r6, #8
+  40432e:	dcdd      	bgt.n	4042ec <task_adc+0xac>
                 inputF32[i++] = (float)adc.value;
-  40433a:	ab32      	add	r3, sp, #200	; 0xc8
-  40433c:	eb03 0386 	add.w	r3, r3, r6, lsl #2
-  404340:	eddd 7a31 	vldr	s15, [sp, #196]	; 0xc4
-  404344:	eef8 7a67 	vcvt.f32.u32	s15, s15
-  404348:	ed43 7a1b 	vstr	s15, [r3, #-108]	; 0xffffff94
-  40434c:	3601      	adds	r6, #1
-  40434e:	e7e7      	b.n	404320 <task_adc+0xe0>
-  404350:	00402995 	.word	0x00402995
-  404354:	2040ca4c 	.word	0x2040ca4c
-  404358:	40064000 	.word	0x40064000
-  40435c:	00400471 	.word	0x00400471
-  404360:	004002a1 	.word	0x004002a1
-  404364:	004002f1 	.word	0x004002f1
-  404368:	004002d1 	.word	0x004002d1
-  40436c:	0040025d 	.word	0x0040025d
-  404370:	004002db 	.word	0x004002db
-  404374:	0040028d 	.word	0x0040028d
-  404378:	00403f7d 	.word	0x00403f7d
-  40437c:	004003f1 	.word	0x004003f1
-  404380:	e000e100 	.word	0xe000e100
-  404384:	4000c000 	.word	0x4000c000
-  404388:	0040418d 	.word	0x0040418d
-  40438c:	00407e50 	.word	0x00407e50
-  404390:	004049a1 	.word	0x004049a1
-  404394:	00402cf5 	.word	0x00402cf5
-  404398:	2040ca48 	.word	0x2040ca48
-  40439c:	004049c5 	.word	0x004049c5
-  4043a0:	2040ca44 	.word	0x2040ca44
-  4043a4:	00402a11 	.word	0x00402a11
+  404330:	ab32      	add	r3, sp, #200	; 0xc8
+  404332:	eb03 0386 	add.w	r3, r3, r6, lsl #2
+  404336:	eddd 7a31 	vldr	s15, [sp, #196]	; 0xc4
+  40433a:	eef8 7a67 	vcvt.f32.u32	s15, s15
+  40433e:	ed43 7a1b 	vstr	s15, [r3, #-108]	; 0xffffff94
+  404342:	3601      	adds	r6, #1
+  404344:	e7eb      	b.n	40431e <task_adc+0xde>
+  404346:	bf00      	nop
+  404348:	00402995 	.word	0x00402995
+  40434c:	2040ca4c 	.word	0x2040ca4c
+  404350:	40064000 	.word	0x40064000
+  404354:	00400471 	.word	0x00400471
+  404358:	004002a1 	.word	0x004002a1
+  40435c:	004002f1 	.word	0x004002f1
+  404360:	004002d1 	.word	0x004002d1
+  404364:	0040025d 	.word	0x0040025d
+  404368:	004002db 	.word	0x004002db
+  40436c:	0040028d 	.word	0x0040028d
+  404370:	00403f7d 	.word	0x00403f7d
+  404374:	004003f1 	.word	0x004003f1
+  404378:	e000e100 	.word	0xe000e100
+  40437c:	4000c000 	.word	0x4000c000
+  404380:	0040418d 	.word	0x0040418d
+  404384:	00407e50 	.word	0x00407e50
+  404388:	004049a1 	.word	0x004049a1
+  40438c:	00402cf5 	.word	0x00402cf5
+  404390:	004049c5 	.word	0x004049c5
+  404394:	2040ca44 	.word	0x2040ca44
+  404398:	00402a11 	.word	0x00402a11
 
-004043a8 <TC1_Handler>:
+0040439c <TC1_Handler>:
 void TC1_Handler(void) {
-  4043a8:	b500      	push	{lr}
-  4043aa:	b083      	sub	sp, #12
+  40439c:	b500      	push	{lr}
+  40439e:	b083      	sub	sp, #12
     ul_dummy = tc_get_status(TC0, 1);
-  4043ac:	2101      	movs	r1, #1
-  4043ae:	4806      	ldr	r0, [pc, #24]	; (4043c8 <TC1_Handler+0x20>)
-  4043b0:	4b06      	ldr	r3, [pc, #24]	; (4043cc <TC1_Handler+0x24>)
-  4043b2:	4798      	blx	r3
-  4043b4:	9001      	str	r0, [sp, #4]
+  4043a0:	2101      	movs	r1, #1
+  4043a2:	4808      	ldr	r0, [pc, #32]	; (4043c4 <TC1_Handler+0x28>)
+  4043a4:	4b08      	ldr	r3, [pc, #32]	; (4043c8 <TC1_Handler+0x2c>)
+  4043a6:	4798      	blx	r3
+  4043a8:	9001      	str	r0, [sp, #4]
     UNUSED(ul_dummy);
-  4043b6:	9b01      	ldr	r3, [sp, #4]
+  4043aa:	9b01      	ldr	r3, [sp, #4]
+    if (collect_data) {
+  4043ac:	4b07      	ldr	r3, [pc, #28]	; (4043cc <TC1_Handler+0x30>)
+  4043ae:	881b      	ldrh	r3, [r3, #0]
+  4043b0:	b29b      	uxth	r3, r3
+  4043b2:	b123      	cbz	r3, 4043be <TC1_Handler+0x22>
 	afec->AFEC_CHER = (afec_ch == AFEC_CHANNEL_ALL) ?
-  4043b8:	4b05      	ldr	r3, [pc, #20]	; (4043d0 <TC1_Handler+0x28>)
-  4043ba:	2240      	movs	r2, #64	; 0x40
-  4043bc:	615a      	str	r2, [r3, #20]
+  4043b4:	4b06      	ldr	r3, [pc, #24]	; (4043d0 <TC1_Handler+0x34>)
+  4043b6:	2240      	movs	r2, #64	; 0x40
+  4043b8:	615a      	str	r2, [r3, #20]
 	afec->AFEC_CR = AFEC_CR_START;
-  4043be:	2202      	movs	r2, #2
-  4043c0:	601a      	str	r2, [r3, #0]
+  4043ba:	2202      	movs	r2, #2
+  4043bc:	601a      	str	r2, [r3, #0]
 }
-  4043c2:	b003      	add	sp, #12
-  4043c4:	f85d fb04 	ldr.w	pc, [sp], #4
-  4043c8:	4000c000 	.word	0x4000c000
-  4043cc:	00400507 	.word	0x00400507
+  4043be:	b003      	add	sp, #12
+  4043c0:	f85d fb04 	ldr.w	pc, [sp], #4
+  4043c4:	4000c000 	.word	0x4000c000
+  4043c8:	00400507 	.word	0x00400507
+  4043cc:	2040ca48 	.word	0x2040ca48
   4043d0:	40064000 	.word	0x40064000
 
 004043d4 <mxt_handler>:

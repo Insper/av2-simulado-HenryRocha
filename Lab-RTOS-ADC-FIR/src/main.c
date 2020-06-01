@@ -221,8 +221,10 @@ void TC1_Handler(void) {
     UNUSED(ul_dummy);
 
     /* Selecina canal e inicializa conversão */
-    afec_channel_enable(AFEC_POT, AFEC_POT_CHANNEL);
-    afec_start_software_conversion(AFEC_POT);
+    if (collect_data) {
+        afec_channel_enable(AFEC_POT, AFEC_POT_CHANNEL);
+        afec_start_software_conversion(AFEC_POT);
+    }
 }
 
 static void AFEC_pot_Callback(void) {
@@ -511,7 +513,7 @@ void task_adc(void) {
     int i = 0;
 
     while (1) {
-        if (xQueueReceive(xQueueADC, &(adc), 100) && collect_data) {
+        if (xQueueReceive(xQueueADC, &(adc), 100)) {
             if (i <= NUM_TAPS) {
                 inputF32[i++] = (float)adc.value;
             } else {
