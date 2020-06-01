@@ -26,7 +26,7 @@
 // Buttons
 #define BUT_SIZE 64
 #define BUT_SPACING 8
-#define NUM_BUTTONS 1
+#define NUM_BUTTONS 3
 
 // Queues
 QueueHandle_t xQueueADC;
@@ -384,19 +384,44 @@ void task_lcd(void) {
     // Posição X inicial do gráfico.
     int x = 0;
 
+    // Escala Y inicial do gráfico.
+    unsigned short int scale = 16;
+
     // Botão que liga e desliga a aquisição de dados.
     t_but but_on = {.width = BUT_SIZE,
                     .height = BUT_SIZE,
                     .border = 2,
-                    .colorOn = COLOR_TOMATO,
+                    .colorOn = COLOR_GREEN,
                     .colorOff = COLOR_GRAY,
                     .text = "ON",
-                    .x = BUT_SIZE / 2 + BUT_SPACING,
+                    .x = BUT_SIZE / 2 + BUT_SPACING * 1 + BUT_SIZE * 0,
                     .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
                     .status = 1};
 
+    // Botão que aumenta a escala no eixo Y.
+    t_but but_upscale = {.width = BUT_SIZE,
+                         .height = BUT_SIZE,
+                         .border = 2,
+                         .colorOn = COLOR_TOMATO,
+                         .colorOff = COLOR_GRAY,
+                         .text = "+",
+                         .x = BUT_SIZE / 2 + BUT_SPACING * 2 + BUT_SIZE * 1,
+                         .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
+                         .status = 1};
+
+    // Botão que diminui a escala no eixo Y.
+    t_but but_downscale = {.width = BUT_SIZE,
+                           .height = BUT_SIZE,
+                           .border = 2,
+                           .colorOn = COLOR_MAGENTA,
+                           .colorOff = COLOR_GRAY,
+                           .text = "-",
+                           .x = BUT_SIZE / 2 + BUT_SPACING * 3 + BUT_SIZE * 2,
+                           .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
+                           .status = 1};
+
     // Criando a lista de botões.
-    t_but buttons[NUM_BUTTONS] = {but_on};
+    t_but buttons[NUM_BUTTONS] = {but_on, but_upscale, but_downscale};
 
     // Configurando o LCD.
     configure_lcd();
@@ -406,6 +431,8 @@ void task_lcd(void) {
 
     // Desenhando os botões.
     draw_button(but_on);
+    draw_button(but_upscale);
+    draw_button(but_downscale);
 
     while (1) {
         // Se existe algo na fila de toques.
@@ -424,6 +451,16 @@ void task_lcd(void) {
                 collect_data = buttons[clickedButton].status;
             }
 
+            if (clickedButton == 1) {
+                scale--;
+                buttons[1].status = 0;
+            }
+
+            if (clickedButton == 2) {
+                scale++;
+                buttons[2].status = 0;
+            }
+
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
             printf("Touch:\tX: %u\tY: %u\tButton:\t%d\r\n", touch.x, touch.y, clickedButton);
         }
@@ -431,11 +468,11 @@ void task_lcd(void) {
         if (xQueueReceive(xQueuePlot, &(plot), (TickType_t)100 / portTICK_PERIOD_MS)) {
             // Desenhando um ponto preto com o valor não filtrado do potênciometro.
             ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
-            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.raw / 16, 2);
+            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.raw / scale - 64, 2);
 
             // Desenhando um ponto preto com o valor filtrado do potênciometro.
             ili9488_set_foreground_color(COLOR_CONVERT(COLOR_RED));
-            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.filtrado / 16, 2);
+            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.filtrado / scale - 64, 2);
 
             // Aumenta o X.
             x = x + 5;
@@ -445,6 +482,8 @@ void task_lcd(void) {
                 x = 0;
                 clear_screen();
                 draw_button(but_on);
+                draw_button(but_upscale);
+                draw_button(but_downscale);
             }
         }
     }
