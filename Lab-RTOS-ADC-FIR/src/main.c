@@ -27,7 +27,7 @@
 // Buttons
 #define BUT_SIZE 64
 #define BUT_SPACING 8
-#define NUM_BUTTONS 4
+#define NUM_BUTTONS 5
 
 // Queues
 QueueHandle_t xQueueADC;
@@ -395,6 +395,9 @@ void task_lcd(void) {
     // Posição X inicial do gráfico.
     int x = 0;
 
+    // Escala X inicial do gráfico.
+    unsigned short int scale_x = 5;
+
     // Escala Y inicial do gráfico.
     unsigned short int scale = 16;
 
@@ -442,8 +445,19 @@ void task_lcd(void) {
                            .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
                            .status = 1};
 
+    // Botão que muda a escala no eixo X.
+    t_but but_scale_x = {.width = BUT_SIZE,
+                         .height = BUT_SIZE,
+                         .border = 2,
+                         .colorOn = COLOR_YELLOWGREEN,
+                         .colorOff = COLOR_GRAY,
+                         .text = "X",
+                         .x = BUT_SIZE / 2 + BUT_SPACING * 5 + BUT_SIZE * 4,
+                         .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
+                         .status = 1};
+
     // Criando a lista de botões.
-    t_but *buttons[NUM_BUTTONS] = {&but_on, &but_upscale, &but_downscale, &but_lp_filter};
+    t_but *buttons[NUM_BUTTONS] = {&but_on, &but_upscale, &but_downscale, &but_lp_filter, &but_scale_x};
 
     // Configurando o LCD.
     configure_lcd();
@@ -456,6 +470,7 @@ void task_lcd(void) {
     draw_button(&but_upscale);
     draw_button(&but_downscale);
     draw_button(&but_lp_filter);
+    draw_button(&but_scale_x);
 
     // Como o botão de ON começa ligado, devemos também desenhar o REC na tela.
     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
@@ -501,6 +516,14 @@ void task_lcd(void) {
                 lp_filter = buttons[3]->status;
             }
 
+            if (clickedButton == 4) {
+                if (buttons[4]->status == 1) {
+                    scale_x = 5;
+                } else {
+                    scale_x = 10;
+                }
+            }
+
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
             printf("Touch:\tX: %u\tY: %u\tButton:\t%d\r\n", touch.x, touch.y, clickedButton);
         }
@@ -517,7 +540,7 @@ void task_lcd(void) {
             }
 
             // Aumenta o X.
-            x = x + 5;
+            x = x + scale_x;
 
             // Quando chega no fim da tela, reseta o X e desenha os botões e o REC novamente.
             if (x >= ILI9488_LCD_WIDTH) {
@@ -529,6 +552,7 @@ void task_lcd(void) {
                 draw_button(&but_upscale);
                 draw_button(&but_downscale);
                 draw_button(&but_lp_filter);
+                draw_button(&but_scale_x);
 
                 // Desenha o REC na tela.
                 ili9488_set_foreground_color(COLOR_CONVERT(COLOR_WHITE));
