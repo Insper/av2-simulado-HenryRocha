@@ -27,18 +27,18 @@ Vocês devem gravar um vídeo do firmware funcionando na placa para submeter o p
 
 ### C
 
-- Exibe a aquisição ADC no display
-- Possui os seguintes botões:
-  - ON/OFF: Liga e desliga a aquisição 
-  - UP: Aumenta a escala vertical do gráfico
-  - DOWN: Diminui a escala vertical do gráfico
-  - FIR: Liga e desliga a filtragem do dado
-- Quando aquisição estiver ativada, exibir o icone de `REC`:
+- [X] Exibe a aquisição ADC no display
+- [X] Possui os seguintes botões:
+  - [X] ON/OFF: Liga e desliga a aquisição 
+  - [X] UP: Aumenta a escala vertical do gráfico
+  - [X] DOWN: Diminui a escala vertical do gráfico
+  - [X] FIR: Liga e desliga a filtragem do dado
+-  [X] Quando aquisição estiver ativada, exibir o icone de `REC`:
   - [![](doc/icon.png)](doc/icon.png)
 
 ### Extras
 
-- Adiciona texto nos botões
-- Os botões mudam de cor quando Ligado/Desligado
-- Adiciona um botão (Extra) ao lado do FIR que muda a escala do eixo X
-- Adiciona um botão que aplica um filtro PASSA ALTAS (fp = 5Hz)
+- [X] Adiciona texto nos botões
+- [X] Os botões mudam de cor quando Ligado/Desligado
+- [X] Adiciona um botão (Extra) ao lado do FIR que muda a escala do eixo X
+- [X] Adiciona um botão que aplica um filtro PASSA ALTAS (fp = 5Hz)
