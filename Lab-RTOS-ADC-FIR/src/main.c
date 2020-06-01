@@ -26,7 +26,7 @@
 // Buttons
 #define BUT_SIZE 64
 #define BUT_SPACING 8
-#define NUM_BUTTONS 3
+#define NUM_BUTTONS 4
 
 // Queues
 QueueHandle_t xQueueADC;
@@ -35,6 +35,7 @@ QueueHandle_t xQueueTouch;
 
 // Flags
 volatile unsigned short int collect_data;
+volatile unsigned short int lp_filter;
 
 // =============================================================================================
 // AFEC DEFINES AND GLOBAL VARIABLES
@@ -328,7 +329,7 @@ void draw_button(t_but but) {
     ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
 
     // Escreve o texto do botão.
-    // font_draw_text(&calibri_36, but.text, but.x - but.width / 2 + but.border + 8, but.y - but.height / 2 + but.border + 8, 0);
+    font_draw_text(&calibri_36, but.text, but.x - but.width / 2 + but.border + 8, but.y - but.height / 2 + but.border + 8, 0);
 }
 
 int process_touch(t_but buttons[], touchData touch, uint32_t n) {
@@ -383,6 +384,9 @@ void task_lcd(void) {
     // Flag que controla se pegamos dados do potênciometro ou não.
     collect_data = 1;
 
+    // Flag que controla se o filtro passa baixa está ligado ou não.
+    lp_filter = 1;
+
     // Posição X inicial do gráfico.
     int x = 0;
 
@@ -422,8 +426,19 @@ void task_lcd(void) {
                            .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
                            .status = 1};
 
+    // Botão que liga/desliga o filtro passa baixa.
+    t_but but_lp_filter = {.width = BUT_SIZE,
+                           .height = BUT_SIZE,
+                           .border = 2,
+                           .colorOn = COLOR_CYAN,
+                           .colorOff = COLOR_GRAY,
+                           .text = "FIR",
+                           .x = BUT_SIZE / 2 + BUT_SPACING * 4 + BUT_SIZE * 3,
+                           .y = ILI9488_LCD_HEIGHT - BUT_SIZE / 2 - BUT_SPACING,
+                           .status = 1};
+
     // Criando a lista de botões.
-    t_but buttons[NUM_BUTTONS] = {but_on, but_upscale, but_downscale};
+    t_but buttons[NUM_BUTTONS] = {but_on, but_upscale, but_downscale, but_lp_filter};
 
     // Configurando o LCD.
     configure_lcd();
@@ -435,6 +450,7 @@ void task_lcd(void) {
     draw_button(but_on);
     draw_button(but_upscale);
     draw_button(but_downscale);
+    draw_button(but_lp_filter);
 
     while (1) {
         // Se existe algo na fila de toques.
@@ -463,18 +479,24 @@ void task_lcd(void) {
                 buttons[2].status = 0;
             }
 
+            if (clickedButton == 3) {
+                lp_filter = buttons[clickedButton].status;
+            }
+
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
             printf("Touch:\tX: %u\tY: %u\tButton:\t%d\r\n", touch.x, touch.y, clickedButton);
         }
 
         if (xQueueReceive(xQueuePlot, &(plot), (TickType_t)100 / portTICK_PERIOD_MS)) {
-            // Desenhando um ponto preto com o valor não filtrado do potênciometro.
-            ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
-            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.raw / scale - 64, 2);
-
-            // Desenhando um ponto preto com o valor filtrado do potênciometro.
-            ili9488_set_foreground_color(COLOR_CONVERT(COLOR_RED));
-            ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.filtrado / scale - 64, 2);
+            if (lp_filter) {
+                // Desenhando um ponto preto com o valor filtrado do potênciometro.
+                ili9488_set_foreground_color(COLOR_CONVERT(COLOR_RED));
+                ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.filtrado / scale - 64, 2);
+            } else {
+                // Desenhando um ponto preto com o valor não filtrado do potênciometro.
+                ili9488_set_foreground_color(COLOR_CONVERT(COLOR_BLACK));
+                ili9488_draw_filled_circle(x, ILI9488_LCD_HEIGHT - plot.raw / scale - 64, 2);
+            }
 
             // Aumenta o X.
             x = x + 5;
@@ -486,6 +508,7 @@ void task_lcd(void) {
                 draw_button(but_on);
                 draw_button(but_upscale);
                 draw_button(but_downscale);
+                draw_button(but_lp_filter);
             }
         }
     }
@@ -514,14 +537,20 @@ void task_adc(void) {
 
     while (1) {
         if (xQueueReceive(xQueueADC, &(adc), 100)) {
-            if (i <= NUM_TAPS) {
-                inputF32[i++] = (float)adc.value;
+            if (lp_filter) {
+                if (i <= NUM_TAPS) {
+                    inputF32[i++] = (float)adc.value;
+                } else {
+                    arm_fir_f32(&S, &inputF32[0], &outputF32[0], BLOCK_SIZE);
+                    plot.raw = (int)inputF32[0];
+                    plot.filtrado = (int)outputF32[0];
+                    xQueueSend(xQueuePlot, &plot, 0);
+                    i = 0;
+                }
             } else {
-                arm_fir_f32(&S, &inputF32[0], &outputF32[0], BLOCK_SIZE);
-                plot.raw = (int)inputF32[0];
-                plot.filtrado = (int)outputF32[0];
+                plot.raw = (float)adc.value;
+                plot.filtrado = (float)0;
                 xQueueSend(xQueuePlot, &plot, 0);
-                i = 0;
             }
         }
     }
