@@ -72,6 +72,9 @@ struct ili9488_opt_t g_ili9488_display_opt;
 #define TASK_LCD_STACK_SIZE (6 * 1024 / sizeof(portSTACK_TYPE))
 #define TASK_LCD_STACK_PRIORITY (tskIDLE_PRIORITY)
 
+#define TASK_FIR_STACK_SIZE (6 * 1024 / sizeof(portSTACK_TYPE))
+#define TASK_FIR_STACK_PRIORITY (tskIDLE_PRIORITY)
+
 // =============================================================================================
 // STRUCTS
 // =============================================================================================
@@ -602,7 +605,7 @@ int main(void) {
         printf("Failed to create test led task\r\n");
     }
 
-    if (xTaskCreate(task_adc, "adc", TASK_LCD_STACK_SIZE, NULL, 0, NULL) != pdPASS) {
+    if (xTaskCreate(task_adc, "adc", TASK_FIR_STACK_SIZE, NULL, TASK_FIR_STACK_PRIORITY, NULL) != pdPASS) {
         printf("Failed to create test adc task\r\n");
     }
 

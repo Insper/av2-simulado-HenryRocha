@@ -25,17 +25,17 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  10 .debug_aranges 000013f8  00000000  00000000  00085e13  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_macro  0002832f  00000000  00000000  0008720b  2**0
+ 11 .debug_macro  0002833b  00000000  00000000  0008720b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_line   00018ed3  00000000  00000000  000af53a  2**0
+ 12 .debug_line   00018ed3  00000000  00000000  000af546  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    000a0676  00000000  00000000  000c840d  2**0
+ 13 .debug_str    000a06d9  00000000  00000000  000c8419  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_loc    0000f13a  00000000  00000000  00168a83  2**0
+ 14 .debug_loc    0000f13a  00000000  00000000  00168af2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00001660  00000000  00000000  00177bbd  2**0
+ 15 .debug_ranges 00001660  00000000  00000000  00177c2c  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_frame  00003e94  00000000  00000000  00179220  2**2
+ 16 .debug_frame  00003e94  00000000  00000000  0017928c  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -11800,7 +11800,7 @@ static inline void sysclk_enable_peripheral_clock(uint32_t ul_id)
   404b4a:	4798      	blx	r3
     }
 
-    if (xTaskCreate(task_adc, "adc", TASK_LCD_STACK_SIZE, NULL, 0, NULL) != pdPASS) {
+    if (xTaskCreate(task_adc, "adc", TASK_FIR_STACK_SIZE, NULL, TASK_FIR_STACK_PRIORITY, NULL) != pdPASS) {
   404b4c:	2300      	movs	r3, #0
   404b4e:	9303      	str	r3, [sp, #12]
   404b50:	9302      	str	r3, [sp, #8]
