@@ -216,7 +216,8 @@ src/main.d src/main.o: ../src/main.c ../src/asf.h \
  ../src/config/conf_board.h ../src/ecg.h ../src/fonts/arial_72.h \
  ../src/fonts/tfont.h ../src/fonts/calibri_36.h \
  ../src/fonts/sourcecodepro_28.h ../src/fonts/tfont.h \
- ../src/maxTouch/maxTouch.h ../src/config/conf_example.h
+ ../src/maxTouch/maxTouch.h ../src/config/conf_example.h \
+ ../src/icons/rec.h
 
 ../src/asf.h:
 
@@ -683,3 +684,5 @@ c:\program\ files\ (x86)\atmel\studio\7.0\toolchain\arm\arm-gnu-toolchain\arm-no
 ../src/maxTouch/maxTouch.h:
 
 ../src/config/conf_example.h:
+
+../src/icons/rec.h:

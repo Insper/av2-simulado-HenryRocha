@@ -19,23 +19,23 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY
   7 .comment      000000b4  00000000  00000000  000509ec  2**0
                   CONTENTS, READONLY
-  8 .debug_info   0002f1c4  00000000  00000000  00050aa0  2**0
+  8 .debug_info   0002f1fe  00000000  00000000  00050aa0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_abbrev 00006057  00000000  00000000  0007fc64  2**0
+  9 .debug_abbrev 00006068  00000000  00000000  0007fc9e  2**0
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_aranges 000013f8  00000000  00000000  00085cbb  2**0
+ 10 .debug_aranges 000013f8  00000000  00000000  00085d06  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_macro  0002832a  00000000  00000000  000870b3  2**0
+ 11 .debug_macro  0002832f  00000000  00000000  000870fe  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_line   00018eb2  00000000  00000000  000af3dd  2**0
+ 12 .debug_line   00018ec8  00000000  00000000  000af42d  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_str    000a0667  00000000  00000000  000c828f  2**0
+ 13 .debug_str    000a0676  00000000  00000000  000c82f5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 14 .debug_loc    0000f13a  00000000  00000000  001688f6  2**0
+ 14 .debug_loc    0000f13a  00000000  00000000  0016896b  2**0
                   CONTENTS, READONLY, DEBUGGING
- 15 .debug_ranges 00001660  00000000  00000000  00177a30  2**0
+ 15 .debug_ranges 00001660  00000000  00000000  00177aa5  2**0
                   CONTENTS, READONLY, DEBUGGING
- 16 .debug_frame  00003e94  00000000  00000000  00179090  2**2
+ 16 .debug_frame  00003e94  00000000  00000000  00179108  2**2
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -11530,14 +11530,14 @@ void task_lcd(void) {
             if (clickedButton == 0) {
   40496c:	f1b8 0f00 	cmp.w	r8, #0
   404970:	d10b      	bne.n	40498a <task_lcd+0x272>
-                collect_data = buttons[clickedButton].status;
+                collect_data = buttons[0].status;
   404972:	f89d 2020 	ldrb.w	r2, [sp, #32]
   404976:	4b15      	ldr	r3, [pc, #84]	; (4049cc <task_lcd+0x2b4>)
   404978:	801a      	strh	r2, [r3, #0]
             if (clickedButton == 3) {
   40497a:	f1b8 0f03 	cmp.w	r8, #3
   40497e:	d10d      	bne.n	40499c <task_lcd+0x284>
-                lp_filter = buttons[clickedButton].status;
+                lp_filter = buttons[3].status;
   404980:	f89d 20a4 	ldrb.w	r2, [sp, #164]	; 0xa4
   404984:	4b12      	ldr	r3, [pc, #72]	; (4049d0 <task_lcd+0x2b8>)
   404986:	801a      	strh	r2, [r3, #0]

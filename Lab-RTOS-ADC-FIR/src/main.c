@@ -17,6 +17,7 @@
 #include "fonts/sourcecodepro_28.h"
 #include "fonts/tfont.h"
 #include "maxTouch/maxTouch.h"
+#include "icons/rec.h"
 
 // clang-format on
 
@@ -466,7 +467,7 @@ void task_lcd(void) {
 
             // Lógica dos botões.
             if (clickedButton == 0) {
-                collect_data = buttons[clickedButton].status;
+                collect_data = buttons[0].status;
             }
 
             if (clickedButton == 1) {
@@ -480,7 +481,7 @@ void task_lcd(void) {
             }
 
             if (clickedButton == 3) {
-                lp_filter = buttons[clickedButton].status;
+                lp_filter = buttons[3].status;
             }
 
             // Printa no console onde ocorreu o toque na tela e qual botão foi clicado.
